@@ -1,11 +1,19 @@
 import argparse
 import json
 
-
 def load_data():
     with open("./data/movies.json", "r") as f:
         data = json.load(f)
         return data
+
+
+def get_results(search_query: str) -> list:
+    matching_titles: list = [
+        movie["title"]
+        for movie in load_data()["movies"]
+        if search_query in movie["title"].lower()
+    ][:5]
+    return matching_titles
 
 
 def main() -> None:
@@ -19,16 +27,11 @@ def main() -> None:
 
     match args.command:
         case "search":
-            # output all the titles:
-            # titles = [movie["title"] for movie in load_data()["movies"]]
-            # print(titles)
-            search_query = args.query.lower()
-            matching_titles = [
-                movie["title"]
-                for movie in load_data()["movies"]
-                if search_query in movie["title"].lower()
-            ]
-            print(matching_titles)
+            search_query: str = args.query.lower()
+            # get_results(search_query)
+            print(f"SEARCHING FOR: {search_query}")
+            for i, movie_name in enumerate(get_results(search_query)):
+                print(f"{i + 1}. {movie_name}")
 
         case _:
             parser.print_help()
