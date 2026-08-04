@@ -1,5 +1,7 @@
 import argparse
 import json
+import string
+
 
 def load_data():
     with open("./data/movies.json", "r") as f:
@@ -7,11 +9,19 @@ def load_data():
         return data
 
 
+def normalize(text: str) -> str:
+    lowered = text.lower()  # case insensibility
+    return lowered.translate(
+        str.maketrans("", "", string.punctuation)
+    )  # remove punctuation
+
+
 def get_results(search_query: str) -> list:
+    normalized_query = normalize(search_query)
     matching_titles: list = [
         movie["title"]
         for movie in load_data()["movies"]
-        if search_query in movie["title"].lower()
+        if normalized_query in normalize(movie["title"])
     ][:5]
     return matching_titles
 
@@ -27,7 +37,7 @@ def main() -> None:
 
     match args.command:
         case "search":
-            search_query: str = args.query.lower()
+            search_query: str = args.query
             # get_results(search_query)
             print(f"SEARCHING FOR: {search_query}")
             for i, movie_name in enumerate(get_results(search_query)):
