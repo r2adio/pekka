@@ -1,6 +1,17 @@
 import argparse
 import json
 import string
+from pathlib import Path
+
+STOP_WORDS_PATH = Path(__file__).parent.parent / "data" / "stop_words.txt"
+STOP_WORDS = {
+    word.strip()
+    # for word in Path("data/stop_words.txt").read_text().splitlines()  # relative to cwd
+    for word in STOP_WORDS_PATH.read_text(
+        encoding="utf-8"
+    ).splitlines()  # relative to file
+    if word.strip()
+}
 
 
 def load_data():
@@ -9,21 +20,33 @@ def load_data():
         return data
 
 
-def normalize(text: str) -> str:
-    lowered = text.lower()  # case insensibility
-    return lowered.translate(
-        str.maketrans("", "", string.punctuation)
-    )  # remove punctuation
+def tokenize(text: str) -> list[str]:
+    return text.split()
+
+
+def remove_stop_words(tokens: list[str]) -> list[str]:
+    return [token for token in tokens if token not in STOP_WORDS]
+
+
+def normalize(text: str) -> list[str]:
+    lowered = text.lower()
+    no_punct = lowered.translate(str.maketrans("", "", string.punctuation))
+    tokens = tokenize(no_punct)
+    return remove_stop_words(tokens)
 
 
 def get_results(search_query: str) -> list:
-    normalized_query = normalize(search_query)
-    matching_titles: list = [
-        movie["title"]
-        for movie in load_data()["movies"]
-        if normalized_query in normalize(movie["title"])
-    ][:5]
-    return matching_titles
+    query_tokens = normalize(search_query)
+    if not query_tokens:
+        return []
+
+    matching_titles: list = []
+    for movie in load_data()["movies"]:
+        title_tokens = normalize(movie["title"])
+        if all(token in title_tokens for token in query_tokens):
+            matching_titles.append(movie["title"])
+
+    return matching_titles[:5]
 
 
 def main() -> None:
