@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from cli.keyword_search import get_results, normalize, tokenize, remove_stop_words
+from cli.keyword_search import normalize, remove_stop_words, search, tokenize
 
 MOVIE_DATA = {
     "movies": [
@@ -43,21 +43,21 @@ def test_normalize():
 
 @patch("cli.keyword_search.load_data", return_value=MOVIE_DATA)
 def test_returns_multiple_matches(mock):
-    assert get_results("zzz") == []
-    assert get_results("alpha") == ["alpha"]
+    assert search("zzz") == []
+    assert search("alpha") == ["alpha"]
     assert mock.call_count == 2
 
 
 @patch("cli.keyword_search.load_data", return_value=MOVIE_DATA)
 def test_search_with_case_and_punctuation(_mock):
-    assert get_results("MATRIX") == ["The Matrix"]
-    assert get_results("hello world") == ["Hello, World!"]
-    assert get_results("sci-fi") == ["sci-fi Heroes"]
+    assert search("MATRIX") == ["The Matrix"]
+    assert search("hello world") == ["Hello, World!"]
+    assert search("sci-fi") == ["sci-fi Heroes"]
 
 
 @patch("cli.keyword_search.load_data", return_value=MOVIE_DATA)
 def test_search_with_stop_words(_mock):
-    assert get_results("the matrix") == ["The Matrix"]
-    assert get_results("a puppy") == []
-    assert get_results("matrix heroes") == []
-    assert get_results("sci-fi heroes") == ["sci-fi Heroes"]
+    assert search("the matrix") == ["The Matrix"]
+    assert search("a puppy") == []
+    assert search("matrix heroes") == []
+    assert search("sci-fi heroes") == ["sci-fi Heroes"]
