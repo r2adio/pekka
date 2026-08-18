@@ -6,7 +6,7 @@ MOVIES_PATH = PROJECT_ROOT / "data" / "movies.json"
 STOPWORDS_PATH = PROJECT_ROOT / "data" / "stop_words.txt"
 
 
-def load_data() -> list[dict]:
+def load_movies() -> list[dict]:
     with MOVIES_PATH.open("r", encoding="utf-8") as f:
         return json.load(f)["movies"]
 

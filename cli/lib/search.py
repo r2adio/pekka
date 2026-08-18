@@ -1,6 +1,6 @@
 import string
 
-from lib.search_utils import load_data, load_stopwords
+from .search_utils import load_movies, load_stopwords
 
 
 def tokenize(text: str) -> list[str]:
@@ -18,15 +18,17 @@ def normalize(text: str) -> list[str]:
     return remove_stopwords(tokens)
 
 
-def search(search_query: str) -> list:
-    query_tokens = normalize(search_query)
-    if not query_tokens:
+def search(query: str, n_res: int) -> list:
+    query_tok = normalize(query)
+    if not query_tok:
         return []
 
     matching_titles: list = []
-    for movie in load_data():
+    for movie in load_movies():
+        if len(matching_titles) >= n_res:
+            break
         title_tokens = normalize(movie["title"])
-        if all(token in title_tokens for token in query_tokens):
+        if all(token in title_tokens for token in query_tok):
             matching_titles.append(movie["title"])
 
-    return matching_titles[:5]
+    return matching_titles
