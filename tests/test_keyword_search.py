@@ -35,7 +35,7 @@ def test_keyword_search(movies):
     ]
 
 
-def test_text_processing(movies):
+def test_preprocessing(movies):
     results = search("country", 5)
     assert "No Country for Old Men" in results
     assert "The Wonderful Country" in results
@@ -50,7 +50,7 @@ def test_tokenization(movies):
     assert search("furious fast", 5) == [
         "Furious Seven",
         "Fast and Furious",
-        "Faster, Pussycat! Kill! Kill!",
+        "Faster, Pussycat! Kill! Kill!",  # TODO: implement stemming(preprocessing)
     ]
 
 
