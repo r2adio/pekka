@@ -1,6 +1,10 @@
 import string
 
+from nltk.stem import PorterStemmer
+
 from .search_utils import load_movies, load_stopwords
+
+stemmer = PorterStemmer()
 
 
 def remove_stopwords(toks: list[str]) -> list[str]:
@@ -10,8 +14,8 @@ def remove_stopwords(toks: list[str]) -> list[str]:
 def normalize(txt: str) -> list[str]:
     txt = txt.lower()
     no_punct = txt.translate(str.maketrans("", "", string.punctuation))
-    toks = no_punct.split()
-    return remove_stopwords(toks)
+    toks = remove_stopwords(no_punct.split())
+    return [stemmer.stem(tok) for tok in toks]
 
 
 def search(query: str, n_res: int) -> list:

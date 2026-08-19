@@ -20,6 +20,9 @@ MOVIE_DATA = [
     {"id": 9, "title": "Hot Potato"},
     {"id": 10, "title": "Hotel Chevalier"},
     {"id": 11, "title": "Killshot"},
+    {"id": 11, "title": "Virginia's Run"},
+    {"id": 11, "title": "Take the Money and Run"},
+    {"id": 11, "title": "Woman on the Run"},
 ]
 
 
@@ -59,4 +62,12 @@ def test_stopwords(movies):
         "Hot Potato",
         "Hotel Chevalier",
         "Killshot",
+    ]
+
+
+def test_stemming(movies):
+    assert search("running", 5) == [
+        "Virginia's Run",
+        "Take the Money and Run",
+        "Woman on the Run",
     ]
