@@ -24,8 +24,12 @@ def search(query: str, n_res: int) -> list:
         if len(matching_titles) >= n_res:
             break
         title_toks = normalize(movie["title"])
-        if any(tok in title_toks for tok in query_toks):
-            # atleast one query_tok must be present in matching title
+        # match query fragments (sub-string) within title tokens, eg: "hot" -> "hotel"
+        if any(
+            query_tok in title_tok
+            for query_tok in query_toks
+            for title_tok in title_toks
+        ):
             matching_titles.append(movie["title"])
 
     return matching_titles

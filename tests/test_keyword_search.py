@@ -50,7 +50,7 @@ def test_tokenization(movies):
     assert search("furious fast", 5) == [
         "Furious Seven",
         "Fast and Furious",
-        "Faster, Pussycat! Kill! Kill!",  # TODO: implement stemming(preprocessing)
+        "Faster, Pussycat! Kill! Kill!",
     ]
 
 

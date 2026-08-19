@@ -13,4 +13,4 @@ def load_movies() -> list[dict]:
 
 def load_stopwords():
     with STOPWORDS_PATH.open("r", encoding="utf-8") as f:
-        return {line.strip() for line in f if line.strip()}
+        return f.read().splitlines()  # .readlines() keeps \n or \r\n attached
