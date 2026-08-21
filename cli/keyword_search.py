@@ -1,6 +1,6 @@
 import argparse
 
-from lib.search import search
+from lib.search import build, search
 
 
 def main() -> None:
@@ -9,6 +9,9 @@ def main() -> None:
 
     search_parser = subparsers.add_parser("search", help="Search movies using keywords")
     search_parser.add_argument("query", type=str, help="Search query")
+
+    build_parser = subparsers.add_parser("build", help="Builds index and saves to disk")
+    # build_parser.add_argument("", type=str, help="")
 
     args = parser.parse_args()
 
@@ -19,6 +22,9 @@ def main() -> None:
             print(f"SEARCHING FOR: {search_query}")
             for i, movie_name in enumerate(search(search_query, 5)):
                 print(f"{i + 1}. {movie_name}")
+
+        case "build":
+            build()
 
         case _:
             parser.print_help()
