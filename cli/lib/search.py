@@ -41,17 +41,31 @@ class InvertedIndex:
         with open(self.docmap_path, "wb") as f:
             pickle.dump(self.docmap, f)
 
+    def load(self) -> bool:
+        if not self.idx_path.exists() or not self.docmap_path.exists():
+            return False
+        with open(self.idx_path, "rb") as f:
+            self.idx = pickle.load(f)
+        with open(self.docmap_path, "rb") as f:
+            self.docmap = pickle.load(f)
+        return True
+
 
 def build():  # builds inverted idx and saves it to disk
     idx = InvertedIndex()
-    idx.build()
-    idx.save()
+    if idx.load():
+        print("Loaded index from cache")
+    else:
+        idx.build()
+        idx.save()
+        print("Built index and saved to cache")
     docs = idx.get_documents("merida")  # get doc for token
     print(f"First document for token 'merida' = {docs[0]}")
 
 
 def remove_stopwords(toks: list[str]) -> list[str]:
-    return [tok for tok in toks if tok not in load_stopwords()]
+    stopwords = load_stopwords()
+    return [tok for tok in toks if tok not in stopwords]
 
 
 def normalize(txt: str) -> list[str]:
