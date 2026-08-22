@@ -41,26 +41,20 @@ class InvertedIndex:
         with open(self.docmap_path, "wb") as f:
             pickle.dump(self.docmap, f)
 
-    def load(self) -> bool:
+    def load(self):
         if not self.idx_path.exists() or not self.docmap_path.exists():
-            return False
+            raise FileNotFoundError("Index files not found in cache")
         with open(self.idx_path, "rb") as f:
             self.idx = pickle.load(f)
         with open(self.docmap_path, "rb") as f:
             self.docmap = pickle.load(f)
-        return True
 
 
 def build():  # builds inverted idx and saves it to disk
     idx = InvertedIndex()
-    if idx.load():
-        print("Loaded index from cache")
-    else:
-        idx.build()
-        idx.save()
-        print("Built index and saved to cache")
-    docs = idx.get_documents("merida")  # get doc for token
-    print(f"First document for token 'merida' = {docs[0]}")
+    idx.build()
+    idx.save()
+    print("Built index and saved to cache")
 
 
 def remove_stopwords(toks: list[str]) -> list[str]:
@@ -76,21 +70,15 @@ def normalize(txt: str) -> list[str]:
 
 
 def search(query: str, n_res: int) -> list:
+    idx = InvertedIndex()
+    try:
+        idx.load()
+    except FileNotFoundError:
+        print("Error: Index not found. Run 'build' command first.")
+        exit(1)
+
     query_toks = normalize(query)
     if not query_toks:
         return []
 
-    matching_titles: list = []
-    for m in load_movies():
-        if len(matching_titles) >= n_res:
-            break
-        title_toks = normalize(m["title"])
-        # match query fragments (sub-string) within title tokens, eg: "hot" -> "hotel"
-        if any(
-            query_tok in title_tok
-            for query_tok in query_toks
-            for title_tok in title_toks
-        ):
-            matching_titles.append(m["title"])
-
-    return matching_titles
+    return [] # TODO: put inverted index search logic here
