@@ -81,4 +81,13 @@ def search(query: str, n_res: int) -> list:
     if not query_toks:
         return []
 
-    return [] # TODO: put inverted index search logic here
+    results = []
+    for tok in query_toks:
+        doc_ids = idx.get_documents(tok)
+        for doc_id in doc_ids:
+            if len(results) >= n_res:
+                return results
+            doc = idx.docmap[doc_id]
+            results.append((doc["title"], doc_id))
+
+    return results
